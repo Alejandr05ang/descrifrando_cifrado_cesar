@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Máquina Enigmática</title>
+    <meta name="description" content="Herramienta interactiva para descubrir el cifrado César de forma pedagógica.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <h1 id="app-title">La Máquina Enigmática</h1>
+    <p class="subtitle">Introduce una palabra o letra y descubre su secreto...</p>
+
+    <div class="container">
+        <!-- SECCIÓN DE LA MÁQUINA PRINCIPAL -->
+        <div class="machine-section">
+            <div class="stage" id="stage">
+                <!-- Caja de entrada: muestra el texto original -->
+                <div class="side-display input-display" id="inputDisplay">
+                    <span class="side-label" id="inputLabel">Entrada</span>
+                    <span class="side-text" id="inputDisplayText">—</span>
+                </div>
+
+                <div class="portal left"></div>
+
+                <div class="black-box" id="blackBox">
+                    <span id="machineStatus">En espera</span>
+                </div>
+
+                <div class="portal right"></div>
+
+                <!-- Caja de salida: muestra el resultado cifrado -->
+                <div class="side-display output-display" id="outputDisplay">
+                    <span class="side-label">Salida</span>
+                    <span class="side-text" id="outputDisplayText">—</span>
+                </div>
+            </div>
+
+            <form class="controls" id="cipherForm">
+                <input type="text" id="textInput" placeholder="Escribe aquí..." autocomplete="off" maxlength="25"
+                    required>
+                <button type="submit" class="btn-submit" id="submitBtn">Enviar</button>
+            </form>
+        </div>
+
+        <!-- PANELES INFERIORES -->
+        <div class="bottom-panels">
+            <!-- Panel de Pistas -->
+            <div class="panel">
+                <h2>
+                    Descubrimiento
+                    <button type="button" class="btn-hint" id="hintBtn">Mostrar pista</button>
+                </h2>
+                <div class="hints-container" id="hintsContainer">
+                    <!-- Las pistas aparecerán aquí dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Panel de Historial -->
+            <div class="panel">
+                <h2>
+                    Registro
+                    <button type="button" class="btn-clear" id="clearBtn">Limpiar</button>
+                </h2>
+                <ul class="history-list" id="historyList">
+                    <!-- Los resultados aparecerán aquí -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

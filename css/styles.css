@@ -1,0 +1,488 @@
+/* =========================================
+   VARIABLES Y ESTILOS GLOBALES
+   ========================================= */
+:root {
+    --bg-color: #0f172a;
+    --panel-bg: #1e293b;
+    --text-color: #f8fafc;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --accent: #10b981;
+    --machine-bg: #0b0f19;
+    --portal-color: #6366f1;
+    --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
+    /* Pista para el click oculto */
+    user-select: none;
+}
+
+p.subtitle {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+}
+
+/* =========================================
+   ÁREA DE LA MÁQUINA Y ANIMACIÓN
+   ========================================= */
+.machine-section {
+    background-color: var(--panel-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Escenario de la animación */
+.stage {
+    position: relative;
+    width: 100%;
+    max-width: 860px;
+    height: 140px;
+    margin: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    overflow: visible;
+    border-bottom: 4px solid #334155;
+}
+
+/* =========================================
+   CAJAS LATERALES (ENTRADA / SALIDA)
+   ========================================= */
+.side-display {
+    width: 130px;
+    min-width: 110px;
+    height: 110px;
+    border-radius: 12px;
+    border: 2px solid #334155;
+    background-color: var(--machine-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.side-display.input-display {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+}
+
+.side-display.output-display {
+    border-color: #334155;
+}
+
+.side-display.output-display.has-result {
+    border-color: var(--accent);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+}
+
+/* Efecto de análisis azul en la caja de entrada */
+.input-display.analyzing {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 22px rgba(59, 130, 246, 0.4) inset, 0 0 18px rgba(59, 130, 246, 0.5);
+}
+
+.input-display.analyzing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.25), transparent);
+    animation: scanBlue 0.5s linear infinite;
+}
+
+@keyframes scanBlue {
+    0% {
+        left: -50%;
+    }
+
+    100% {
+        left: 150%;
+    }
+}
+
+.side-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.side-text {
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-family: monospace;
+    color: #94a3b8;
+    word-break: break-all;
+    text-align: center;
+    padding: 0 0.4rem;
+    transition: color 0.3s;
+}
+
+.input-display .side-text.active {
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.output-display .side-text.active {
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+/* Portales (Entrada y Salida) */
+.portal {
+    width: 40px;
+    height: 100px;
+    background: linear-gradient(to right, var(--portal-color), #312e81);
+    border-radius: 8px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 0 15px var(--portal-color);
+}
+
+.portal.left {
+    border-radius: 8px 0 0 8px;
+}
+
+.portal.right {
+    border-radius: 0 8px 8px 0;
+    background: linear-gradient(to left, var(--portal-color), #312e81);
+}
+
+/* La Caja Negra central */
+.black-box {
+    width: 160px;
+    height: 120px;
+    background-color: var(--machine-bg);
+    border: 3px solid #334155;
+    border-radius: 12px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de procesamiento */
+.black-box.processing {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4) inset, 0 0 20px rgba(16, 185, 129, 0.6);
+}
+
+.black-box.processing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.2), transparent);
+    animation: scan 0.6s linear infinite;
+}
+
+@keyframes scan {
+    0% {
+        left: -50%;
+    }
+
+    100% {
+        left: 150%;
+    }
+}
+
+/* Texto animado */
+.moving-text {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: #475569;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 6;
+    /* Sobre portales durante la animación */
+    pointer-events: none;
+}
+
+.text-in {
+    animation: slideIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.text-out {
+    animation: slideOut 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: 20px;
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        left: 50%;
+        transform: translateX(-50%) scale(0.5);
+        opacity: 0;
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        right: 50%;
+        transform: translateX(50%) scale(0.5);
+        opacity: 0;
+    }
+
+    80% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        right: 20px;
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* =========================================
+   CONTROLES E INPUT
+   ========================================= */
+.controls {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 0.8rem 1.2rem;
+    font-size: 1.1rem;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    background-color: #0f172a;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus {
+    border-color: var(--primary);
+}
+
+button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+}
+
+.btn-submit {
+    background-color: var(--primary);
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+    background-color: #475569;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   PANELES INFERIORES (Historial y Pistas)
+   ========================================= */
+.bottom-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .bottom-panels {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.panel h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #94a3b8;
+}
+
+/* Pistas */
+.btn-hint {
+    background-color: #f59e0b;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn-hint:hover {
+    background-color: #d97706;
+}
+
+.hints-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.hint-card {
+    background-color: #334155;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #f59e0b;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Historial */
+.btn-clear {
+    background-color: #ef4444;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn-clear:hover {
+    background-color: #dc2626;
+}
+
+.history-list {
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0f172a;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease;
+}
+
+.history-arrow {
+    color: var(--accent);
+    font-weight: bold;
+    margin: 0 1rem;
+}
+
+.original-text {
+    color: #cbd5e1;
+}
+
+.result-text {
+    color: var(--accent);
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--panel-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
